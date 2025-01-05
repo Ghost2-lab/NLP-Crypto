@@ -60,7 +60,7 @@ if 'labeled_submission' in data.columns and 'comment_score' in data.columns:
 
     # Score development chart
     st.header("Time-Series Score Visualization")
-    adjustment_option = st.selectbox("Select Score Type:", ["Popularity Score", "Sentiment Score"])
+    adjustment_option = st.selectbox("Select Score Type:", ["Popularity Score", "Sentiment Score"], index=1)
     include_price = st.checkbox("Include Daily Price Development [in Red]") 
 
     if 'created_utc' in data.columns:
@@ -123,7 +123,7 @@ if 'labeled_submission' in data.columns and 'comment_score' in data.columns:
 
     #Time-Series score visualization
     st.header("Gradient Score Dynamic")
-    visualization_option = st.selectbox("Select Gradient Score Type:", ["Popularity Score", "Sentiment Score"])
+    visualization_option = st.selectbox("Select Gradient Score Type:", ["Popularity Score", "Sentiment Score"], index=1)
 
     if 'created_utc' in data.columns:
         if visualization_option == "Popularity Score":
