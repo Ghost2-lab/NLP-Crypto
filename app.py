@@ -78,7 +78,7 @@ if 'labeled_submission' in data.columns and 'comment_score' in data.columns:
 # Score development chart
 st.header("Time-Series Score Visualization")
 adjustment_option = st.selectbox("Select Score Type:", ["Popularity Score", "Sentiment Score"], index=1)
-include_price = st.checkbox("Include Daily Price Development [in Red]") 
+include_price = st.checkbox("Include Daily Price Development [in Red]", value=True) 
 
 if 'created_utc' in data.columns:
     if adjustment_option == "Popularity Score":
@@ -294,8 +294,19 @@ with st.expander(f"Show metrics for performance and predictive analysis:"):
 st.header("Future Research Potential")
 st.write("Additional efforts could include implementing advanced methods to filter out bot-generated content, reducing noise and ensuring higher data quality. This would help achieve a more reliable analysis of genuine user sentiment. Furthermore, exploring the impact of temporal lags between sentiment changes and market reactions could offer valuable insights into the timing and causality of these dynamics. These enhancements would improve the robustness and predictive power of the analysis.")
 
-#st.sidebar.write(f"For the price development {selected_label} has {positive_percentage_gradient_price:.2f}% growth and {negative_percentage_gradient_price:.2f}% price decline.")
-st.sidebar.write(f"For the selected date range {selected_label} has {positive_percentage_gradient_score:.2f}% positive and {negative_percentage_gradient_score:.2f}% negative sentiment. During this time {selected_label} also experienced a price development of {price_development:.2f}%.")
+# Provide insights about price development and sentiment analysis
+if 'positive_percentage_gradient_score' in locals() and 'negative_percentage_gradient_score' in locals() and 'price_development' in locals():
+    st.sidebar.write(
+        f"For the selected date range, {selected_label} showed {positive_percentage_gradient_score:.2f}% positive sentiment "
+        f"and {negative_percentage_gradient_score:.2f}% negative sentiment. "
+        f"Additionally, {selected_label} experienced a price development of {price_development:.2f}%."
+    )
+else:
+    st.sidebar.write(
+        f"For the selected date range, {selected_label} showed {positive_percentage_gradient_score:.2f}% positive sentiment "
+        f"and {negative_percentage_gradient_score:.2f}% negative sentiment. "
+    )
+
 st.sidebar.header("Correlation Analysis")
 
 # Predictive strength interpretation
@@ -312,5 +323,7 @@ elif lagged_correlation < lagged_price_correlation:
     st.sidebar.markdown("<span style='color:red'>**The lagged correlation suggests that price changes lead Reddit score changes, implying no predictive value in using Reddit scores for forecasting prices.**</span>", unsafe_allow_html=True)
 else:
     st.sidebar.markdown("**The correlation is balanced, indicating that neither Reddit scores nor price changes have a leading influence on the other, suggesting no clear predictive relationship.**")
+
+
 
 
