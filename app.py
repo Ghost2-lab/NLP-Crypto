@@ -314,5 +314,3 @@ else:
     st.sidebar.markdown("**The correlation is balanced, indicating that neither Reddit scores nor price changes have a leading influence on the other, suggesting no clear predictive relationship.**")
 
 
-
-
