@@ -49,7 +49,7 @@ if 'labeled_submission' in data.columns and 'comment_score' in data.columns:
     else:
         start_date, end_date = date_min, date_max
 
-    # Calculate scores
+    # calculate scores
     scores = {
         label: data[(data['labeled_submission'] == label) & (data['created_utc'] >= start_date) & (data['created_utc'] <= end_date)]['comment_score'].sum() for label in unique_labels
     }
@@ -75,7 +75,7 @@ if 'labeled_submission' in data.columns and 'comment_score' in data.columns:
         with col2:
             st.write("The displayed graph and table showcase the cryptocurrencies and their corresponding raw Reddit scores accumulated during the specified time period. These scores indicate which cryptocurrencies are most frequently discussed within the subreddit r/CryptoCurrency. This analysis provides insights into the popularity and trends of various cryptocurrencies. If implemented in real-time, such data could effectively monitor which cryptocurrencies are gaining hype within the community.")
             st.write("Additionally, tracking the raw Reddit scores over time allows for the identification of emerging patterns and sudden spikes in discussions. These trends could signal increased interest or hype, potentially reflecting upcoming market movements.")
-# Score development chart
+# score development chart
 st.header("Time-Series Score Visualization")
 adjustment_option = st.selectbox("Select Score Type:", ["Popularity Score", "Sentiment Score"], index=1)
 include_price = st.checkbox("Include Daily Price Development [in Red]", value=True) 
@@ -121,7 +121,7 @@ if 'created_utc' in data.columns:
             merged_data = pd.merge(score_development, daily_prices[['date', coin_column]], on='date', how='inner')
             merged_data.rename(columns={coin_column: 'price'}, inplace=True)
 
-            # Calculate price development
+            # calculate price development
             price_first = merged_data['price'].iloc[0]
             price_latest = merged_data['price'].iloc[-1]
             price_development = ((price_latest - price_first) / price_first) * 100 if price_first != 0 else 0
@@ -195,7 +195,6 @@ if 'created_utc' in data.columns:
         merged_data = pd.merge(selected_time_scores, daily_prices[['date', coin_column]], on='date', how='inner')
         merged_data.rename(columns={coin_column: 'price'}, inplace=True)
 
-        # Calculate gradients for score and price
         merged_data['Score Gradient'] = merged_data['score'].diff()
         merged_data['Price Gradient'] = merged_data['price'].diff()
 
@@ -203,7 +202,6 @@ if 'created_utc' in data.columns:
         y_values_gradient_score = merged_data['Score Gradient']
         y_values_gradient_price = merged_data['Price Gradient']
 
-        # Calculate areas for score gradients
         positive_area_gradient_score = np.trapz(y_values_gradient_score[y_values_gradient_score > 0], x=x_values_gradient[y_values_gradient_score > 0])
         negative_area_gradient_score = np.trapz(y_values_gradient_score[y_values_gradient_score < 0], x=x_values_gradient[y_values_gradient_score < 0])
 
@@ -211,7 +209,6 @@ if 'created_utc' in data.columns:
         positive_percentage_gradient_score = (abs(positive_area_gradient_score) / total_area_gradient_score) * 100 if total_area_gradient_score != 0 else 0
         negative_percentage_gradient_score = (abs(negative_area_gradient_score) / total_area_gradient_score) * 100 if total_area_gradient_score != 0 else 0
 
-        # Calculate areas for price gradients
         positive_area_gradient_price = np.trapz(y_values_gradient_price[y_values_gradient_price > 0], x=x_values_gradient[y_values_gradient_price > 0])
         negative_area_gradient_price = np.trapz(y_values_gradient_price[y_values_gradient_price < 0], x=x_values_gradient[y_values_gradient_price < 0])
 
@@ -240,25 +237,12 @@ if 'created_utc' in data.columns:
         )
 
         st.altair_chart(combined_gradient_chart, use_container_width=True)
-
-        
-
   
             
     else:
         st.error(f"Price data for {selected_label} is not available in the daily prices dataset.")
 else:
     st.error("The necessary columns ('labeled_submission', 'comment_score', and 'created_utc') do not exist in the dataset.")
-
-
-    # st.write(f"For the given time period {selected_label} experience sentiment GROWTH {positive_percentage_gradient:.2f}% of the time")
-    # st.write(f"Decline: {negative_percentage_gradient:.2f}%")
-
-    # with st.expander("Expand to read future research potential:"):
-    #     st.write(f"Growth: {positive_percentage_gradient:.2f}%")
-    #     st.write(f"Decline: {negative_percentage_gradient:.2f}%")
-
-
 
 
 
@@ -269,7 +253,7 @@ if 'Score Gradient' in merged_data.columns and 'Price Gradient' in merged_data.c
     correlation = merged_data[['Score Gradient', 'Price Gradient']].corr().iloc[0, 1]
 
     # lagged correlations
-    lag_days = 1  #change this value to calculate lag correlations
+    lag_days = 1  
     merged_data['Lagged Score Gradient'] = merged_data['Score Gradient'].shift(lag_days)
     lagged_correlation = merged_data[['Lagged Score Gradient', 'Price Gradient']].corr().iloc[0, 1]
 
@@ -294,7 +278,6 @@ with st.expander(f"Show metrics for performance and predictive analysis:"):
 st.header("Future Research Potential")
 st.write("Additional efforts could include implementing advanced methods to filter out bot-generated content, reducing noise and ensuring higher data quality. This would help achieve a more reliable analysis of genuine user sentiment. Furthermore, exploring the impact of temporal lags between sentiment changes and market reactions could offer valuable insights into the timing and causality of these dynamics. These enhancements would improve the robustness and predictive power of the analysis.")
 
-# Provide insights about price development and sentiment analysis
 if 'positive_percentage_gradient_score' in locals() and 'negative_percentage_gradient_score' in locals() and 'price_development' in locals():
     st.sidebar.write(
         f"For the selected date range, {selected_label} showed {positive_percentage_gradient_score:.2f}% positive sentiment "
@@ -309,7 +292,6 @@ else:
 
 st.sidebar.header("Correlation Analysis")
 
-# Predictive strength interpretation
 if lagged_correlation > lagged_price_correlation:
     if lagged_correlation < 0:
         st.sidebar.markdown("<span style='color:green'>**The lagged correlation of indicates that changes in Reddit scores are inversely related to price changes, meaning that an increase in scores often leads to a decrease in prices and vice versa.**</span>", unsafe_allow_html=True)
